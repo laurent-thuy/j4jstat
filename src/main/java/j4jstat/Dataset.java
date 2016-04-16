@@ -6,10 +6,10 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({ "dimension", "id", "size", "role" })
-public class Dataset {
-	private Object version;
-	private Object clazz;
+@JsonIgnoreProperties({ "dimension", "id", "size", "role", "cells", "ntuples" })
+public class Dataset implements JsonStat {
+	private String version;
+	private String clazz;
 	private Object value;
 	private Object status;
 	private Map<String, Dimension> dimension;
@@ -17,24 +17,44 @@ public class Dataset {
 	private Object updated;
 	private Object source;
 	private Map<String, Object> extension;
-	private Object href;
+	private String href;
 	private Map<String, List<Relation>> link;
 	private List<String> note;
 	private Map<String, Object> error;
-	private Object id;
-	private Object size;
+	private List<String> id;
+	private List<Integer> size;
 	private Map<String, List<Object>> role;
+	private Map<List<Integer>, Cell> cells;
+
+	public void displayCells() {
+		for (List<Integer> ntuple : getCells().keySet()) {
+			System.out.println("Cell: " + ntuple + " - " + getCells().get(ntuple).getValue());
+			System.out.println("Labels: " + getCells().get(ntuple).getLabels());
+			System.out.println("Indexes: " + getCells().get(ntuple).getIndexes());
+		}
+	}
 	
-	
-	public Object getVersion() {
+	public Map<List<Integer>, Cell> getCells() {
+		return cells;
+	}
+
+	public void setCells(Map<List<Integer>, Cell> cells) {
+		this.cells = cells;
+	}
+
+	public String getVersion() {
 		return version;
 	}
 
-	public void setId(Object id) {
+	public void setClazz(String clazz) {
+		this.clazz = clazz;
+	}
+
+	public void setId(List<String> id) {
 		this.id = id;
 	}
 
-	public void setSize(Object size) {
+	public void setSize(List<Integer> size) {
 		this.size = size;
 	}
 
@@ -46,11 +66,11 @@ public class Dataset {
 		this.dimension = dimension;
 	}
 
-	public Object getId() {
+	public List<String> getId() {
 		return id;
 	}
 
-	public Object getSize() {
+	public List<Integer> getSize() {
 		return size;
 	}
 
@@ -59,7 +79,7 @@ public class Dataset {
 	}
 
 	@JsonGetter("class")
-	public Object getClazz() {
+	public String getClazz() {
 		return clazz;
 	}
 
@@ -91,7 +111,7 @@ public class Dataset {
 		return extension;
 	}
 
-	public Object getHref() {
+	public String getHref() {
 		return href;
 	}
 
@@ -106,4 +126,49 @@ public class Dataset {
 	public Map<String, Object> getError() {
 		return error;
 	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	/*
+	 * package private methods
+	 */
+	Object getValueByNtuple(List<Integer> ntuple) {
+		Object valueToReturn = null;
+		int index = getValueIndexByNtuple(ntuple);
+		if (getValue() instanceof List) {
+			valueToReturn = ((List<Object>) getValue()).get(index);
+		} else if (getValue() instanceof Map) {
+			valueToReturn = ((Map<String, Dimension>) getValue()).get(index);
+		} else {
+			// TODO exception
+		}
+		
+		// TODO test with value as map
+		return valueToReturn;
+	}
+
+	/**
+	 * Ntuple to index.
+	 *
+	 * @param ntuple
+	 *            the ntuple
+	 * @return the int
+	 */
+	int getValueIndexByNtuple(List<Integer> ntuple) {
+		int index = 0;
+
+		int mult = 1;
+		int nDims = getSize().size();
+		for (int i = 0; i < nDims; i++) {
+			mult *= (i > 0) ? getSize().get(nDims - i) : 1;
+			index += mult * ntuple.get(nDims - i - 1);
+		}
+		return index;
+	}
+	/*
+	 * end package private methods
+	 */
+
 }

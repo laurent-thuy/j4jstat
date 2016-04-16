@@ -7,22 +7,23 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Collection {
-	private Object version;
-	private Object clazz;
-	private Object href;
+public class Collection implements JsonStat{
+	private String version;
+	private String clazz;
+	private String href;
 	private Object label;
 	private Object updated;
 	private Map<String, List<Relation>> link;
-	public Object getVersion() {
+	
+	public String getVersion() {
 		return version;
 	}
 	
 	@JsonGetter("class")
-	public Object getClazz() {
+	public String getClazz() {
 		return clazz;
 	}
-	public Object getHref() {
+	public String getHref() {
 		return href;
 	}
 	public Object getLabel() {

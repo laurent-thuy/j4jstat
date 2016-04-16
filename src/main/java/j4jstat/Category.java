@@ -5,10 +5,10 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties({"index"})
 public class Category {
 	private Object index;
-	private Object label;
+	private Map<String, String> label;
 	private Map<String, List<Object>> child;
 	private Map<String, List<Double>> coordinates;
 	private Map<String, Map<String, Object>> unit;
@@ -18,7 +18,7 @@ public class Category {
 		return index;
 	}
 
-	public Object getLabel() {
+	public Map<String, String> getLabel() {
 		return label;
 	}
 

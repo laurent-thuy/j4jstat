@@ -7,17 +7,17 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Dimension {
-	private Object clazz;
+public class Dimension implements JsonStat {
+	private String clazz;
 	private Object label;
 	private Category category;
 	private Map<String, List<Relation>> link;
 	private Map<String, Object> extension;
-	private Object href;
+	private String href;
 	private List<String> note;
-	
+
 	@JsonGetter("class")
-	public Object getClazz() {
+	public String getClazz() {
 		return clazz;
 	}
 
@@ -37,7 +37,7 @@ public class Dimension {
 		return extension;
 	}
 
-	public Object getHref() {
+	public String getHref() {
 		return href;
 	}
 
